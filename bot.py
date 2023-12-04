@@ -5,12 +5,12 @@ from pathlib import Path
 import os
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
-os.environ["OPENAI_API_KEY"] = <OpenAI-API>
+os.environ["OPENAI_API_KEY"] = "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"
 from openai import OpenAI
 
 genmed = 'GenMedGPT.json'
 meddia = 'MedDialog.json'
-embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+embeddings = HuggingFaceEmbeddings(model_name="bge-small-en-v1.5")
 db = FAISS.load_local("faiss_index", embeddings)
 
 def RAG(input,k=5):
@@ -31,8 +31,8 @@ def RAG(input,k=5):
 
 def prompt_template(prompt):
     rag = RAG(prompt)
-    prompt_ = f'''system message: you are a doctor diagnosis patient's symptom and provide solution.
-here is some relevant talk between doctors and patients.
+    prompt_ = f'''system message: you are a doctor who provide solution to patient's symptom.
+Here is some relevant talk between doctors and patients.
 ####
 {rag}
 ####
@@ -58,7 +58,7 @@ def generate_response(prompt):
       )
   return completion.choices[0].message.content
 
-st.title("NLP Question Answering Bot")
+st.title("Expert Clinic")
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
 if 'past' not in st.session_state:
