@@ -5,7 +5,7 @@ from pathlib import Path
 import os
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
-os.environ["OPENAI_API_KEY"] = <OpenAI API>
+os.environ["OPENAI_API_KEY"] = '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'
 from openai import OpenAI
 
 genmed = 'GenMedGPT.json'
@@ -14,8 +14,9 @@ embeddings = HuggingFaceEmbeddings(model_name="bge-small-en-v1.5")
 db = FAISS.load_local("faiss_index", embeddings)
 
 # RAG
-def RAG(input,k=5):
-    ret_docs = db.max_marginal_relevance_search(input,k)
+def RAG(input, k=5):
+    ret_docs = db.max_marginal_relevance_search(input, k)
+    print(ret_docs)
     rag = []
     for doc in ret_docs:
         if doc.metadata["source"] == '/kaggle/input/raw-medicalqa/GenMedGPT.json':
@@ -31,7 +32,6 @@ def RAG(input,k=5):
     rag = "\n\n".join(rag)
     return rag
 
-
 # Prompt 
 def prompt_template(prompt):
     rag = RAG(prompt)
@@ -46,11 +46,11 @@ Assistant role: Doctor: '''
     
 # query GPT
 def generate_response(prompt):
-  '''
-  This function input a prompt, call the api of openai and response.
-  '''
-  client = OpenAI()
-  completion = client.chat.completions.create(
+    '''
+    This function input a prompt, call the api of openai and response.
+    '''
+    client = OpenAI()
+    completion = client.chat.completions.create(
         model="gpt-3.5-turbo-16k",
         messages=[
           {"role": "system", "content": "you are an expert doctor, Waston."},
@@ -59,8 +59,8 @@ def generate_response(prompt):
           temperature=1e-7,
           presence_penalty =1.1,
           top_p =1
-      )
-  return completion.choices[0].message.content
+        )
+    return completion.choices[0].message.content
 
 # Extraction Part
 # format constraint
@@ -115,7 +115,6 @@ output =
     response = completion.choices[0].message.content
     return response
     
-
 st.title("MedGPT")
 if 'generated' not in st.session_state:
     st.session_state['generated'] = []
